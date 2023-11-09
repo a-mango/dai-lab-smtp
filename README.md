@@ -1,1 +1,3 @@
-DAI Lab 3: SMTP
+# DAI Lab 3: SMTP
+
+---
