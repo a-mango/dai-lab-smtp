@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+skinparam groupInheritance 3
+hide empty methods
+hide empty members
+
+class SmtpClient {
+    - {static} String address
+    - {static} int port
+    {static} + main(String[] args): void
+    + SmtpClient(String victimFile, String messageFile, int groupCount)
+    + run(): void
+}
+
+class SmtpHandler {
+    - String address
+    - int port
+    - String[] receivers
+    - String message
+    + SmtpHandler(String address, int port, Mail mail)
+    - headerEhlo(): void
+    - headerFrom(): void
+    - headerTo(): void
+    - messagePreamble(): void
+    - messageBody(): void
+    + transact(): void
+}
+
+class Mail {
+    Mail(String[] receivers, String message)
+    - String[] receivers
+    - String message
+    + getReceivers(): String[]
+    + getMessage(): String
+}
+
+class Parser {
+    - String[] receivers
+    - String[] messageList
+    - int groupCount
+    Parser(String victimFile, String messageFile, int groupCount)
+    {static} + parseFile(String path) : String[] content
+    - selectMessage(): String message
+    - selectVictims(): String[] receivers
+    + formGroups(): Mail[] groups
+}
+
+SmtpClient "1"--"1..*"SmtpHandler
+SmtpHandler "1"--"1" Mail
+SmtpClient "1"--"1" Parser
+Parser "1"--"1..*" Mail
+
+
+@enduml
