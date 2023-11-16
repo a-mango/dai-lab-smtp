@@ -19,11 +19,11 @@ class SmtpHandler {
     - String[] receivers
     - String message
     + SmtpHandler(String address, int port, Mail mail)
-    - headerEhlo(): void
-    - headerFrom(): void
-    - headerTo(): void
-    - messagePreamble(): void
-    - messageBody(): void
+    - headerEhlo(): boolean
+    - headerFrom(): boolean
+    - headerTo(): boolean
+    - messagePreamble(): boolean
+    - messageBody(): boolean
     + transact(): void
 }
 
