@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test for the Main class.
+ * Unit test for the SmtpClient class.
  */
-public class MainTest {
+public class SmtpClientTest {
     /**
      * Demo test.
      */
