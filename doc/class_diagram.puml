@@ -7,6 +7,7 @@ hide empty members
 
 class Client {
     {static} + main(String[] args): void
+    - mails: Mail[]
     + Client(String victimFile, String messageFile, int groupCount)
     + execute(): void
 }
@@ -44,9 +45,9 @@ enum SmtpServerCode {
 class Parser {
     - groups: Mail[]
     Parser(String victimFile, String messageFile, int groupCount)
-    - selectMessage(): String
-    - selectSender(): String
-    - selectVictims(): String[]
+    - selectMessage(messages: String[]): String
+    - selectCandidate(candidates: String[]): String
+    - selectVictims(candidates: String[]): String[]
     + getGroups(): Mail[]
     {static} - parseFile(String path) : String[]
 }
