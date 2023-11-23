@@ -5,24 +5,37 @@ skinparam groupInheritance 3
 hide empty methods
 hide empty members
 
-class SmtpClient {
+class Client {
     {static} + main(String[] args): void
-    + SmtpClient(String victimFile, String messageFile, int groupCount)
+    + Client(String victimFile, String messageFile, int groupCount)
     + run(): void
 }
 
-class SmtpHandler {
-    + handle(Socket socket, Worker worker)
+class Handler {
+    + handle(Socket socket, SmtpWorker worker)
 }
 
-class Worker {
-    Worker(Mail[] mails)
-    - headerEhlo(): boolean
-    - headerFrom(): boolean
-    - headerTo(): boolean
-    - messagePreamble(): boolean
-    - messageBody(): boolean
-    + transact(): void
+class SmtpWorker {
+    SmtpWorker(Mail mail)
+    + work(String message) : String
+    - identity(): String
+    - mailHeader(): String
+    - mailBody(): String
+}
+
+enum SmtpProcedureStep {
+    OPENING
+    CLIENT_ID
+    SERVER_ID
+    MAIL_HEADER
+    MAIL_DATA
+}
+
+enum SmtpServerCode {
+    220
+    221
+    250
+    354
 }
 
 class Parser {
@@ -44,10 +57,11 @@ class Mail {
 }
 
 
-SmtpClient ..> SmtpHandler
-SmtpClient ..> Parser
-SmtpHandler .down.> Worker
+Client ..> Handler
+Client ..> Parser
+Handler .down.> SmtpWorker
 Parser ..> Mail
-Worker .r.> Mail
-
+SmtpWorker "*" -right-> "1" Mail : "Message >"
+SmtpWorker "*" -left-> "1" SmtpProcedureStep : "Current step >"
+SmtpWorker .down.> SmtpServerCode
 @enduml
