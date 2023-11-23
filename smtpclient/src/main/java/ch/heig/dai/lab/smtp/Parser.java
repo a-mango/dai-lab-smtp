@@ -24,16 +24,6 @@ public class Parser {
     }
 
     /**
-     * Parse the contents of a text file
-     *
-     * @param path The path of the file to parse.
-     * @return The parsed content of the file.
-     */
-    private static String[] parseFile(String path) {
-        return null;
-    }
-
-    /**
      * Select a message from a list.
      *
      * @param messages The message to select
@@ -69,6 +59,16 @@ public class Parser {
      * @return The list of emails containing the victims and message aggregations.
      */
     public Mail[] getGroups() {
+        return null;
+    }
+
+    /**
+     * Parse the contents of a text file
+     *
+     * @param path The path of the file to parse.
+     * @return The parsed content of the file.
+     */
+    private static String[] parseFile(String path) {
         return null;
     }
 }
