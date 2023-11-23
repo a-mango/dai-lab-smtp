@@ -1,5 +1,6 @@
 package ch.heig.dai.lab.smtp;
 
+import java.util.Arrays;
 
 /**
  * Encapsulate the data of an email.
@@ -8,6 +9,16 @@ package ch.heig.dai.lab.smtp;
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
 public class Mail {
+    /*
+     * The recipients of the email. The first receiver is the sender.
+     */
+    private final String[] receivers;
+
+    /**
+     * The message of the email.
+     */
+    private final String message;
+
     /**
      * Create an email object.
      *
@@ -15,7 +26,17 @@ public class Mail {
      * @param message   The message of the email.
      */
     Mail(String[] receivers, String message) {
+        this.receivers = Arrays.copyOf(receivers, receivers.length);
+        this.message = message;
+    }
 
+    /**
+     * Get the sender of the email.
+     *
+     * @return
+     */
+    public String getSender() {
+        return null;
     }
 
     /**
@@ -32,7 +53,7 @@ public class Mail {
      *
      * @return The message of the email.
      */
-    public String[] getMessages() {
+    public String getMessage() {
         return null;
     }
 }
