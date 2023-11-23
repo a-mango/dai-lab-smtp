@@ -5,51 +5,65 @@ skinparam groupInheritance 3
 hide empty methods
 hide empty members
 
-class SmtpClient {
-    - {static} String address
-    - {static} int port
+class Client {
     {static} + main(String[] args): void
-    + SmtpClient(String victimFile, String messageFile, int groupCount)
+    + Client(String victimFile, String messageFile, int groupCount)
     + run(): void
 }
 
-class SmtpHandler {
-    - String address
-    - int port
-    - String[] receivers
-    - String message
-    + SmtpHandler(String address, int port, Mail mail)
-    - headerEhlo(): boolean
-    - headerFrom(): boolean
-    - headerTo(): boolean
-    - messagePreamble(): boolean
-    - messageBody(): boolean
-    + transact(): void
+class Handler {
+    + handle(Socket socket, SmtpWorker worker)
+}
+
+class SmtpWorker {
+    SmtpWorker(Mail mail)
+    + work(String message) : String
+    - identity(): String
+    - mailHeader(): String
+    - mailBody(): String
+}
+
+enum SmtpProcedureStep {
+    OPENING
+    INIT_CLIENT
+    INIT_SERVER
+    MAIL_HEADER
+    MAIL_DATA
+}
+
+enum SmtpServerCode {
+    220
+    221
+    250
+    354
+}
+
+class Parser {
+    - Mail[] groups
+    Parser(String victimFile, String messageFile, int groupCount)
+    - selectMessage(): String
+    - selectSender(): String
+    - selectVictims(): String[]
+    + getGroups(): Mail[]
+    {static} - parseFile(String path) : String[]
 }
 
 class Mail {
-    Mail(String[] receivers, String message)
     - String[] receivers
     - String message
+
+    Mail(String[] receivers, String message)
+    + getSender(): String
     + getReceivers(): String[]
     + getMessage(): String
 }
 
-class Parser {
-    - String[] receivers
-    - String[] messageList
-    - int groupCount
-    Parser(String victimFile, String messageFile, int groupCount)
-    {static} + parseFile(String path) : String[] content
-    - selectMessage(): String message
-    - selectVictims(): String[] receivers
-    + formGroups(): Mail[] groups
-}
 
-SmtpClient "1"--"1..*"SmtpHandler
-SmtpHandler "1"--"1" Mail
-SmtpClient "1"--"1" Parser
-Parser "1"--"1..*" Mail
-
-
+Client ..> Handler
+Client ..> Parser
+Handler .down.> SmtpWorker
+Parser ..> Mail
+SmtpWorker "*" -right-> "1" Mail : "Message >"
+SmtpWorker "*" -left-> "1" SmtpProcedureStep : "State >"
+SmtpWorker .down.> SmtpServerCode
 @enduml
