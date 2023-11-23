@@ -39,11 +39,13 @@ enum SmtpServerCode {
 }
 
 class Parser {
+    - Mail[] groups
     Parser(String victimFile, String messageFile, int groupCount)
     - selectMessage(): String
+    - selectSender(): String
     - selectVictims(): String[]
-    + formGroups(): Mail[]
-    {static} + parseFile(String path) : String[]
+    + getGroups(): Mail[]
+    {static} - parseFile(String path) : String[]
 }
 
 class Mail {
@@ -62,6 +64,6 @@ Client ..> Parser
 Handler .down.> SmtpWorker
 Parser ..> Mail
 SmtpWorker "*" -right-> "1" Mail : "Message >"
-SmtpWorker "*" -left-> "1" SmtpProcedureStep : "Current step >"
+SmtpWorker "*" -left-> "1" SmtpProcedureStep : "State >"
 SmtpWorker .down.> SmtpServerCode
 @enduml
