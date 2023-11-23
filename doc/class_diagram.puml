@@ -8,15 +8,18 @@ hide empty members
 class Client {
     {static} + main(String[] args): void
     + Client(String victimFile, String messageFile, int groupCount)
-    + run(): void
+    + execute(): void
 }
 
 class Handler {
-    + handle(Socket socket, SmtpWorker worker)
+    - socket: Socket
+    - worker: Worker
+    Handler(Socket socket, Worker worker)
+    + run() : void
 }
 
-class SmtpWorker {
-    SmtpWorker(Mail mail)
+class Worker {
+    Worker(Mail mail)
     + work(String message) : String
     - identity(): String
     - mailHeader(): String
@@ -39,7 +42,7 @@ enum SmtpServerCode {
 }
 
 class Parser {
-    - Mail[] groups
+    - groups: Mail[]
     Parser(String victimFile, String messageFile, int groupCount)
     - selectMessage(): String
     - selectSender(): String
@@ -49,21 +52,22 @@ class Parser {
 }
 
 class Mail {
-    - String[] receivers
-    - String message
-
+    - receivers: String[]
+    - message: String
     Mail(String[] receivers, String message)
     + getSender(): String
     + getReceivers(): String[]
     + getMessage(): String
 }
 
+interface Runnable
 
 Client ..> Handler
 Client ..> Parser
-Handler .down.> SmtpWorker
+Handler .down.> Worker
+Runnable .right.|> Handler
 Parser ..> Mail
-SmtpWorker "*" -right-> "1" Mail : "Message >"
-SmtpWorker "*" -left-> "1" SmtpProcedureStep : "State >"
-SmtpWorker .down.> SmtpServerCode
+Worker "*" -right-> "1" Mail : "Message >"
+Worker "*" -left-> "1" SmtpProcedureStep : "State >"
+Worker .down.> SmtpServerCode
 @enduml
