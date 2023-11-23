@@ -7,6 +7,7 @@ hide empty members
 
 class Client {
     {static} + main(String[] args): void
+    - mails: Mail[]
     + Client(String victimFile, String messageFile, int groupCount)
     + execute(): void
 }
