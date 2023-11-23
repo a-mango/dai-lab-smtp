@@ -29,7 +29,7 @@ public class Parser {
      * @param messages The message to select
      * @return The selected message.
      */
-    private String selectMessage(String messages) {
+    private String selectMessage(String[] messages) {
         return null;
     }
 
@@ -39,7 +39,7 @@ public class Parser {
      * @param candidates The list of candidates.
      * @return The selected candidate.
      */
-    private String selectCandidate(String candidates) {
+    private String selectCandidate(String[] candidates) {
         return null;
     }
 
@@ -49,7 +49,7 @@ public class Parser {
      * @param candidates The pool of candidates.
      * @return An array of selected candidates.
      */
-    private String[] selectReceivers(String candidates) {
+    private String[] selectReceivers(String[] candidates) {
         return null;
     }
 
