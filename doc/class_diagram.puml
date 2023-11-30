@@ -27,15 +27,15 @@ class Worker {
     - mailBody(): String
 }
 
-enum SmtpProcedureStep {
-    OPENING
-    INIT_CLIENT
-    INIT_SERVER
-    MAIL_HEADER
-    MAIL_DATA
+enum SmtpCommand {
+    EHLO
+    MAIL
+    RCPT
+    DATA
+    QUIT
 }
 
-enum SmtpServerCode {
+enum SmtpStatus {
     220
     221
     250
@@ -70,5 +70,5 @@ Runnable .right.|> Handler
 Parser ..> Mail
 Worker "*" -right-> "1" Mail : "Message >"
 Worker "*" -left-> "1" SmtpProcedureStep : "State >"
-Worker .down.> SmtpServerCode
+Worker .down.> SmtpStatus
 @enduml
