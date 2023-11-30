@@ -78,7 +78,7 @@ public class WorkerTest {
     @Test
     public void messageTest() {
         String response = worker.work("354 Start mail input; end with <CRLF>.<CRLF>\r\n");
-        assertEquals("Subject: Here is the message\r\n\r\nHere is the message\r\n.\r\n", response);
+        assertEquals("Subject: Here is the message\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nHere is the message\r\n.\r\n", response);
     }
 
     /**
