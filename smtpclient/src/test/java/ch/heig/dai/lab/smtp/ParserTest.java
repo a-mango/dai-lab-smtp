@@ -2,17 +2,51 @@ package ch.heig.dai.lab.smtp;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for the Parser class.
+ *
+ * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
+ * @author Hugo Germano <hugo.germano@heig-vd.ch>
+ * @see Parser
  */
 public class ParserTest {
     /**
-     * Demo test.
+     * Test that the parser exits correctly when the input files does not exist.
      */
     @Test
-    public void shouldAnswerWithTrue() {
-        assertTrue(true);
+    public void missingFileThrowsTest() {
+        assertThrows(FileNotFoundException.class, () -> {
+            new Parser("empty.txt", "missing.txt", 1);
+        });
+    }
+
+    /**
+     * Test that the parser exits correctly when the input files are empty.
+     */
+    @Test
+    public void emptyFileThrowsTest() {
+        assertThrows(Exception.class, () -> {
+            new Parser("empty.txt", "empty.txt", 1);
+        });
+    }
+
+    /**
+     * Test that the parser correctly forms groups.
+     */
+    @Test
+    public void groupFormationTest() {
+        // Run a few iterations to make sure the groups are of correct length.
+        for (int i = 0; i < 20; i++) {
+            Parser parser = new Parser("victims.txt", "messages.txt", 1);
+            Mail[] groups = parser.getGroups();
+            assertEquals(1, groups.length);
+            assertNotNull(groups[0].sender());
+            assertTrue(groups[0].receivers().length > 2 && groups[0].receivers().length < 5);
+            assertNotNull(groups[0].message());
+        }
     }
 }
