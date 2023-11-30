@@ -6,7 +6,7 @@ package ch.heig.dai.lab.smtp;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public enum SmtpProcedureStep {
+public enum SmtpCommand {
     /**
      * The HELO step.
      */
@@ -38,7 +38,7 @@ public enum SmtpProcedureStep {
      *
      * @param value The value
      */
-    SmtpProcedureStep(String value) {
+    SmtpCommand(String value) {
         this.value = value;
     }
 

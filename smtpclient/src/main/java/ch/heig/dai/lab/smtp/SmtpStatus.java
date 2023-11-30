@@ -7,7 +7,7 @@ package ch.heig.dai.lab.smtp;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public enum SmtpServerCode {
+public enum SmtpStatus {
     /**
      * The requested action was not taken and the error condition is temporary
      */
@@ -41,7 +41,7 @@ public enum SmtpServerCode {
      * @param key   The key
      * @param value The value
      */
-    SmtpServerCode(Integer key, String value) {
+    SmtpStatus(Integer key, String value) {
         this.key = key;
         this.value = value;
     }
