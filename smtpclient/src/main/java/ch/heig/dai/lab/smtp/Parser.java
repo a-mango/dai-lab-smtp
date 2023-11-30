@@ -25,11 +25,14 @@ public class Parser {
      * @param messageFile The list of potential messages.
      * @param groupCount  The number of groups to create.
      */
-    Parser(String victimFile, String messageFile, int groupCount) {
+    Parser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
         this.groups = new Mail[groupCount];
 
         String[] victims = parseFile(victimFile);
         String[] messages = parseFile(messageFile);
+
+        if (victims.length == 0 || messages.length == 0)
+            throw new IllegalArgumentException("The victim or message file is empty.");
 
         for (int i = 0; i < groupCount; i++) {
             String sender = selectCandidate(victims);
@@ -46,14 +49,12 @@ public class Parser {
      * @param path The path of the file to parse.
      * @return The parsed content of the file.
      */
-    private static String[] parseFile(String path) {
+    private static String[] parseFile(String path) throws FileNotFoundException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (var in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(classloader.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
             return in.lines().toArray(String[]::new);
-        } catch (IOException e) {
-            System.out.println("Error while parsing file: " + path);
-            System.exit(1);
-            return null;
+        } catch (Exception e) {
+            throw new FileNotFoundException("File not found: " + path);
         }
     }
 
