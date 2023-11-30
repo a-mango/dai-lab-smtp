@@ -20,8 +20,9 @@ public class Handler implements Runnable {
    /**
     * Create a Handler.
     * 
-    * @param socket socket to co
-    * @param worker
+    * @param socket socket to use to connect to server
+    * @param worker worker to send the mail to the server, compute each process of
+    *               the mail sending
     */
    Handler(Socket socket, Worker worker) {
       this.socket = socket;
@@ -43,6 +44,7 @@ public class Handler implements Runnable {
 
       } catch (Exception e) {
          System.out.println("Error: " + e);
+         System.exit(1);
       }
    }
 }
