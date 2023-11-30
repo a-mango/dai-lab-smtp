@@ -27,15 +27,15 @@ class Worker {
     - mailBody(): String
 }
 
-enum SmtpProcedureStep {
-    OPENING
-    INIT_CLIENT
-    INIT_SERVER
-    MAIL_HEADER
-    MAIL_DATA
+enum SmtpCommand {
+    EHLO
+    MAIL
+    RCPT
+    DATA
+    QUIT
 }
 
-enum SmtpServerCode {
+enum SmtpStatus {
     220
     221
     250
@@ -53,13 +53,17 @@ class Parser {
 }
 
 class Mail {
+    - sender: String
     - receivers: String[]
     - message: String
-    Mail(String[] receivers, String message)
+    Mail(String sender, String[] receivers, String message)
     + getSender(): String
     + getReceivers(): String[]
     + getMessage(): String
 }
+
+note right of Mail: Java Record
+
 
 interface Runnable
 
@@ -69,6 +73,6 @@ Handler .down.> Worker
 Runnable .right.|> Handler
 Parser ..> Mail
 Worker "*" -right-> "1" Mail : "Message >"
-Worker "*" -left-> "1" SmtpProcedureStep : "State >"
-Worker .down.> SmtpServerCode
+Worker "*" -left-> "1" SmtpCommand : "State >"
+Worker .down.> SmtpStatus
 @enduml
