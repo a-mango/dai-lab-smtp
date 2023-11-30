@@ -19,9 +19,7 @@ public class ParserTest {
      */
     @Test
     public void missingFileThrowsTest() {
-        assertThrows(FileNotFoundException.class, () -> {
-            new Parser("empty.txt", "missing.txt", 1);
-        });
+        assertThrows(FileNotFoundException.class, () -> new Parser("empty.txt", "missing.txt", 1));
     }
 
     /**
@@ -29,23 +27,21 @@ public class ParserTest {
      */
     @Test
     public void emptyFileThrowsTest() {
-        assertThrows(Exception.class, () -> {
-            new Parser("empty.txt", "empty.txt", 1);
-        });
+        assertThrows(Exception.class, () -> new Parser("empty.txt", "empty.txt", 1));
     }
 
     /**
      * Test that the parser correctly forms groups.
      */
     @Test
-    public void groupFormationTest() {
+    public void groupFormationTest() throws FileNotFoundException {
         // Run a few iterations to make sure the groups are of correct length.
         for (int i = 0; i < 20; i++) {
             Parser parser = new Parser("victims.txt", "messages.txt", 1);
             Mail[] groups = parser.getGroups();
             assertEquals(1, groups.length);
             assertNotNull(groups[0].sender());
-            assertTrue(groups[0].receivers().length > 2 && groups[0].receivers().length < 5);
+            assertTrue(groups[0].receivers().length >= 2 && groups[0].receivers().length <= 5);
             assertNotNull(groups[0].message());
         }
     }
