@@ -18,11 +18,15 @@ public enum SmtpCommand {
     /**
      * The RCPT step.
      */
-    RCPT("RCPT TO: <%s>\r\n"),
+    RCPT("RCPT TO: %s\r\n"),
     /**
      * The DATA step.
      */
     DATA("DATA\r\n"),
+    /**
+     * The MESSAGE step.
+     */
+    MESSAGE("Subject: %s\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\n%s\r\n.\r\n"),
     /**
      * The QUIT step.
      */
@@ -49,5 +53,14 @@ public enum SmtpCommand {
      */
     public String getValue() {
         return value;
+    }
+
+    public SmtpCommand next() {
+        SmtpCommand[] command = SmtpCommand.values();
+        int i = 0;
+        while (command[i] != this) i++;
+        i++;
+        i %= command.length;
+        return command[i];
     }
 }
