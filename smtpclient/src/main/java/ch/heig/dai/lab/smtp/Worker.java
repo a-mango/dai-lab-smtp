@@ -88,7 +88,7 @@ public class Worker {
             case RCPT ->
                     String.format(SmtpCommand.MAIL.getValue(), String.format("<%s>", String.join("> <", mail.receivers())));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
-            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message(), mail.message().substring(20));
+            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, 20), mail.message().substring(20));
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
     }
