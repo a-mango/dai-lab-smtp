@@ -24,6 +24,10 @@ public enum SmtpCommand {
      */
     DATA("DATA\r\n"),
     /**
+     * The MESSAGE step.
+     */
+    MESSAGE("%s\r\n%s\r\n.\r\n"),
+    /**
      * The QUIT step.
      */
     QUIT("QUIT\r\n");
