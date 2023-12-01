@@ -92,4 +92,13 @@ public class Worker {
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
     }
+
+    /**
+     * Get the current command.
+     *
+     * @return The current command.
+     */
+    public SmtpCommand getCurrentCommand() {
+        return currentCommand;
+    }
 }
