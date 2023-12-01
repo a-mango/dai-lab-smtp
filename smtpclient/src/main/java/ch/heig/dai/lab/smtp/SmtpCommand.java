@@ -35,7 +35,7 @@ public enum SmtpCommand {
         @Override
         public SmtpCommand next() {
             return this; // QUIT is the last step
-        };
+        }
     };
 
     /**
