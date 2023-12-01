@@ -11,7 +11,7 @@ public enum SmtpCommand {
     /**
      * The HELO step.
      */
-    HELO("HELO %s\r\n"),
+    EHLO("EHLO %s\r\n"),
     /**
      * The MAIL step.
      */
