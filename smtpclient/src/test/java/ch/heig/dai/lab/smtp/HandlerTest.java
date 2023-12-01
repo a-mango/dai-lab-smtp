@@ -21,7 +21,11 @@ public class HandlerTest {
      */
     @Test
     public void runTest() {
-        try (ServerSocket socket = new ServerSocket(1025); Socket client = new Socket("localhost", 1025); Socket server = socket.accept(); var in = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8)); var out = new BufferedWriter(new OutputStreamWriter(server.getOutputStream(), StandardCharsets.UTF_8))) {
+        try(ServerSocket socket = new ServerSocket(1025);
+            Socket client = new Socket("localhost", 1025);
+            Socket server = socket.accept();
+            var in = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8));
+            var out = new BufferedWriter(new OutputStreamWriter(server.getOutputStream(), StandardCharsets.UTF_8))) {
             var mail = new Mail("sender", new String[]{"receiver"}, "message");
             var worker = new Worker(mail);
             var handler = new Handler(client, worker); // Create a handler. Any thrown error will make this test fail.
