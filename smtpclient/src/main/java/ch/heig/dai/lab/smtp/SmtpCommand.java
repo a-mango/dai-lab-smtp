@@ -7,10 +7,11 @@ package ch.heig.dai.lab.smtp;
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
 public enum SmtpCommand {
+    WAIT(""),
     /**
      * The HELO step.
      */
-    HELO("HELO %s\r\n"),
+    EHLO("EHLO %s\r\n"),
     /**
      * The MAIL step.
      */
@@ -30,7 +31,12 @@ public enum SmtpCommand {
     /**
      * The QUIT step.
      */
-    QUIT("QUIT\r\n");
+    QUIT("QUIT\r\n") {
+        @Override
+        public SmtpCommand next() {
+            return this; // QUIT is the last step
+        }
+    };
 
     /**
      * The value of the enum
@@ -56,11 +62,6 @@ public enum SmtpCommand {
     }
 
     public SmtpCommand next() {
-        SmtpCommand[] command = SmtpCommand.values();
-        int i = 0;
-        while (command[i] != this) i++;
-        i++;
-        i %= command.length;
-        return command[i];
+        return values()[ordinal() + 1];
     }
 }

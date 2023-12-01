@@ -77,10 +77,11 @@ public class Client {
         final int SERVER_SOCKET = 8025;
         final String SERVER_ADDRESS = "localhost";
 
-        try (var socket = new Socket(SERVER_ADDRESS, SERVER_SOCKET);
-             ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            for (Mail mail : mails)
-                executor.execute(new Handler(socket, new Worker(mail))); // Create a new thread for each mail.
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            // FIXME: I'm not sure this is caught properly.
+            for (Mail mail : mails) {
+                executor.execute(new Handler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new Worker(mail)));
+            }
         } catch (Exception e) {
             System.out.println("Error : " + e);
         }

@@ -24,13 +24,18 @@ public class Worker {
     private SmtpCommand currentCommand;
 
     /**
+     * The current recipient index.
+     */
+    private int currentRecipientIndex = 0;
+
+    /**
      * Constructor.
      *
      * @param mail The mail to be sent by the worker.
      */
     Worker(Mail mail) {
         this.mail = mail;
-        this.currentCommand = SmtpCommand.HELO;
+        this.currentCommand = SmtpCommand.WAIT;
     }
 
     /**
@@ -42,38 +47,48 @@ public class Worker {
     public String work(String message) {
         try {
             handleRequest(message);
+            String response = handleResponse();
+            System.out.print(message + "\n" + response);
+            return response;
         } catch (IllegalStateException e) {
             System.err.println(e.getMessage());
             return String.format(SmtpCommand.QUIT.getValue());
         }
-
-        String response = handleResponse();
-
-        currentCommand = currentCommand.next();
-
-        return response;
     }
 
     /**
-     * Handle the response from the server based on the current step in the SMTP exchange.
+     * Handle the response from the server based on the current step in the SMTP exchange and update the current step.
      *
      * @param request The message from the server.
      */
     private void handleRequest(String request) {
-        switch (currentCommand) {
-            case HELO, RCPT, MAIL, MESSAGE -> {
-                if (!request.startsWith(SmtpStatus.OK.getValue()))
+        currentCommand = switch (currentCommand) {
+            case WAIT -> {
+                if (!request.startsWith(SmtpStatus.SERVICE_READY.getKey()))
                     throw new IllegalStateException("Unexpected response: " + request);
+                yield currentCommand.next();
+            }
+            case EHLO, MAIL, MESSAGE -> {
+                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                    throw new IllegalStateException("Unexpected response: " + request);
+                yield currentCommand.next();
+            }
+            case RCPT -> {
+                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                    throw new IllegalStateException("Unexpected response: " + request);
+                else if (currentRecipientIndex == mail.receivers().length) yield currentCommand.next();
+                yield currentCommand;
             }
             case DATA -> {
-                if (!request.startsWith(SmtpStatus.START_MAIL_INPUT.getValue()))
+                if (!request.startsWith(SmtpStatus.START_MAIL_INPUT.getKey()))
                     throw new IllegalStateException("Unexpected response: " + request);
+                yield currentCommand.next();
             }
             case QUIT -> {
                 if (!request.startsWith("221")) throw new IllegalStateException("Unexpected response: " + request);
+                yield currentCommand.next();
             }
-            default -> throw new IllegalStateException("Unexpected response: " + currentCommand);
-        }
+        };
     }
 
     /**
@@ -83,13 +98,22 @@ public class Worker {
      */
     private String handleResponse() {
         return switch (currentCommand) {
-            case HELO -> String.format(SmtpCommand.HELO.getValue(), "localhost");
+            case WAIT -> "";
+            case EHLO -> String.format(SmtpCommand.EHLO.getValue(), "localhost");
             case MAIL -> String.format(SmtpCommand.MAIL.getValue(), mail.sender());
-            case RCPT ->
-                    String.format(SmtpCommand.MAIL.getValue(), String.format("<%s>", String.join("> <", mail.receivers())));
+            case RCPT -> String.format(SmtpCommand.RCPT.getValue(), String.format("<%s>", mail.receivers()[currentRecipientIndex++]));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
             case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, 20), mail.message().substring(20));
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
+    }
+
+    /**
+     * Get the current command.
+     *
+     * @return The current command.
+     */
+    public SmtpCommand getCurrentCommand() {
+        return currentCommand;
     }
 }
