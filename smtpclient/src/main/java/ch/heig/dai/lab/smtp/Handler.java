@@ -42,7 +42,7 @@ public class Handler implements Runnable {
             out.flush();
          }
       } catch (Exception e) {
-         System.out.println("Error: " + e);
+         System.err.println("Error: " + e.getMessage());
          System.exit(1);
       }
    }
