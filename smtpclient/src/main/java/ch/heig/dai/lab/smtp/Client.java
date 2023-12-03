@@ -78,7 +78,6 @@ public class Client {
         final String SERVER_ADDRESS = "localhost";
 
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            // FIXME: I'm not sure this is caught properly.
             for (Mail mail : mails) {
                 executor.execute(new Handler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new Worker(mail)));
             }
