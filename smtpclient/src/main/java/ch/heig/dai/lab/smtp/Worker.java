@@ -103,7 +103,11 @@ public class Worker {
             case MAIL -> String.format(SmtpCommand.MAIL.getValue(), mail.sender());
             case RCPT -> String.format(SmtpCommand.RCPT.getValue(), String.format("<%s>", mail.receivers()[currentRecipientIndex++]));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
-            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, 20), mail.message().substring(20));
+            case MESSAGE -> {
+                String message = mail.message();
+                String subject = message.substring(0, message.indexOf(".") - 1);
+                yield String.format(SmtpCommand.MESSAGE.getValue(), subject, message);
+            }
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
     }
