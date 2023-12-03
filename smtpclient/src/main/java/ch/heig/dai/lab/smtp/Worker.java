@@ -68,7 +68,19 @@ public class Worker {
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }
-            case EHLO, MAIL, MESSAGE -> {
+            case EHLO -> {
+                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                    throw new IllegalStateException("Unexpected response: " + request);
+                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand.next();
+                else yield SmtpCommand.MAIL;
+            }
+            case EXT -> {
+                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                    throw new IllegalStateException("Unexpected response: " + request);
+                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand;
+                else yield SmtpCommand.MAIL;
+            }
+            case MAIL, MESSAGE -> {
                 if (!request.startsWith(SmtpStatus.OK.getKey()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
@@ -100,6 +112,7 @@ public class Worker {
         return switch (currentCommand) {
             case WAIT -> "";
             case EHLO -> String.format(SmtpCommand.EHLO.getValue(), "localhost");
+            case EXT -> String.format(SmtpCommand.EXT.getValue());
             case MAIL -> String.format(SmtpCommand.MAIL.getValue(), mail.sender());
             case RCPT -> String.format(SmtpCommand.RCPT.getValue(), String.format("<%s>", mail.receivers()[currentRecipientIndex++]));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
