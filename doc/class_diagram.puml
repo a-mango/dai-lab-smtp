@@ -6,22 +6,22 @@ hide empty methods
 hide empty members
 
 class Client {
-    {static} + main(String[] args): void
+    {static} + main(args: String[]): void
     - mails: Mail[]
-    + Client(String victimFile, String messageFile, int groupCount)
+    + Client(victimFile: String, messageFile: String, groupCount: int)
     + execute(): void
 }
 
 class Handler {
     - socket: Socket
     - worker: Worker
-    Handler(Socket socket, Worker worker)
+    Handler(socket: Socket, worker: Worker)
     + run() : void
 }
 
 class Worker {
     Worker(Mail mail)
-    + work(String message) : String
+    + work(message: String) : String
     - identity(): String
     - mailHeader(): String
     - mailBody(): String
@@ -44,7 +44,7 @@ enum SmtpStatus {
 
 class Parser {
     - groups: Mail[]
-    Parser(String victimFile, String messageFile, int groupCount)
+    Parser(victimFile: String, messageFile: String, groupCount: int)
     - selectMessage(messages: String[]): String
     - selectCandidate(candidates: String[]): String
     - selectVictims(candidates: String[]): String[]
@@ -56,7 +56,7 @@ class Mail {
     - sender: String
     - receivers: String[]
     - message: String
-    Mail(String sender, String[] receivers, String message)
+    Mail(sender: String, receivers: String[], message: String)
     + getSender(): String
     + getReceivers(): String[]
     + getMessage(): String
