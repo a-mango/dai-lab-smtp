@@ -27,7 +27,16 @@ public enum SmtpCommand {
     /**
      * The MESSAGE step.
      */
-    MESSAGE("Subject: %s\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\n%s\r\n.\r\n"),
+    MESSAGE("""
+            Date: %s\r
+            From: %s\r
+            Subject: %s\r
+            To: %s\r
+            Content-Type: plain/text; charset="UTF-16";\r
+            \r
+            %s\r
+            .\r
+            """),
     /**
      * The QUIT step.
      */
