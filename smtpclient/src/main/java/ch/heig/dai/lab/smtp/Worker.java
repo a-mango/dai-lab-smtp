@@ -48,7 +48,7 @@ public class Worker {
         try {
             handleRequest(message);
             String response = handleResponse();
-            System.out.print(message + "\n" + response);
+            System.out.print(message + response);
             return response;
         } catch (IllegalStateException e) {
             System.err.println(e.getMessage());
@@ -72,13 +72,13 @@ public class Worker {
                 if (!request.startsWith(SmtpStatus.OK.getKey()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand.next();
-                else yield SmtpCommand.MAIL;
+                yield SmtpCommand.MAIL;
             }
             case EXT -> {
                 if (!request.startsWith(SmtpStatus.OK.getKey()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand;
-                else yield SmtpCommand.MAIL;
+                yield currentCommand.next();
             }
             case MAIL, MESSAGE -> {
                 if (!request.startsWith(SmtpStatus.OK.getKey()))
@@ -116,7 +116,7 @@ public class Worker {
             case MAIL -> String.format(SmtpCommand.MAIL.getValue(), mail.sender());
             case RCPT -> String.format(SmtpCommand.RCPT.getValue(), String.format("<%s>", mail.receivers()[currentRecipientIndex++]));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
-            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, 20), mail.message().substring(20));
+            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, mail.message().indexOf('.')), mail.message());
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
     }
