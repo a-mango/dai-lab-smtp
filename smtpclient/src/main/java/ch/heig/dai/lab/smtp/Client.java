@@ -13,6 +13,16 @@ import java.util.concurrent.Executors;
  */
 public class Client {
     /**
+     * The port of the server.
+     */
+    final static int SERVER_SOCKET = 1025;
+
+    /**
+     * The address of the server.
+     */
+    final static String SERVER_ADDRESS = "localhost";
+
+    /**
      * The mails to send to the server.
      */
     private final Mail[] mails;
@@ -74,9 +84,6 @@ public class Client {
      * Execute the client. Create a new thread for each mail and send it to the server.
      */
     public void execute() {
-        final int SERVER_SOCKET = 8025;
-        final String SERVER_ADDRESS = "localhost";
-
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             for (Mail mail : mails) {
                 executor.execute(new Handler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new Worker(mail)));
@@ -85,5 +92,4 @@ public class Client {
             System.out.println("Error : " + e);
         }
     }
-
 }
