@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  maildev:
+    image: maildev/maildev
+    environment:
+      - TZ=Europe/Zurich
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "1080:1080"
+      - "1025:1025"
