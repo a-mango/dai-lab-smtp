@@ -1,5 +1,8 @@
 package ch.heig.dai.lab.smtp;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Handle the data exchange in an SMTP conversation. This object is stateful and should be used by a single thread for
  * a single session. The worker will keep track of the current step in the SMTP conversation and generate the
@@ -69,19 +72,19 @@ public class Worker {
                 yield currentCommand.next();
             }
             case EHLO -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
-                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand.next();
+                else if (request.startsWith(SmtpStatus.OK.code() + "-")) yield currentCommand.next();
                 yield SmtpCommand.MAIL;
             }
             case EXT -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
-                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand;
+                else if (request.startsWith(SmtpStatus.OK.code() + "-")) yield currentCommand;
                 yield currentCommand.next();
             }
             case MAIL, MESSAGE -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }
@@ -116,7 +119,14 @@ public class Worker {
             case MAIL -> String.format(SmtpCommand.MAIL.getValue(), mail.sender());
             case RCPT -> String.format(SmtpCommand.RCPT.getValue(), String.format("<%s>", mail.receivers()[currentRecipientIndex++]));
             case DATA -> String.format(SmtpCommand.DATA.getValue(), mail.message());
-            case MESSAGE -> String.format(SmtpCommand.MESSAGE.getValue(), mail.message().substring(0, mail.message().indexOf('.')), mail.message());
+            case MESSAGE -> {
+                var date = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date());
+                var sender = String.format("%s <%s>", mail.sender(), mail.sender());
+                var subject = mail.message().substring(0, mail.message().indexOf('.'));
+                var receivers = String.join(", ", mail.receivers());
+                var message = mail.message();
+                yield String.format(SmtpCommand.MESSAGE.getValue(), date, sender, subject, receivers, message);
+            }
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
     }

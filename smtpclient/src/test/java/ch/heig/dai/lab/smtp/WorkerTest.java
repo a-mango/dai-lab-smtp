@@ -2,6 +2,9 @@ package ch.heig.dai.lab.smtp;
 
 import org.junit.jupiter.api.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -73,9 +76,9 @@ public class WorkerTest {
     @Test
     @Order(3)
     public void rcptTest() {
-        String response = worker.work("250 OK\r\n");
+        String response = worker.work("250 OK");
         assertEquals("RCPT TO: <a@test.com>\r\n", response);
-        response = worker.work("250 OK\r\n");
+        response = worker.work("250 OK");
         assertEquals("RCPT TO: <b@test.com>\r\n", response);
     }
 
@@ -85,7 +88,7 @@ public class WorkerTest {
     @Test
     @Order(4)
     public void dataTest() {
-        String response = worker.work("250 OK\r\n");
+        String response = worker.work("250 OK");
         assertEquals("DATA\r\n", response);
     }
 
@@ -95,8 +98,19 @@ public class WorkerTest {
     @Test
     @Order(5)
     public void messageTest() {
-        String response = worker.work("354 Start mail input; end with <CRLF>.<CRLF>\r\n");
-        assertEquals("Subject: Here is the email message\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nHere is the email message. Sent from the smtp client \uD83D\uDCEC\r\n.\r\n", response);
+        String response = worker.work("354 Start mail input; end with <CRLF>.<CRLF>");
+        var date = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date());
+        String expected = """
+                Date: %s\r
+                From: s@test.com <s@test.com>\r
+                Subject: Here is the email message\r
+                To: a@test.com, b@test.com\r
+                Content-Type: plain/text; charset="UTF-16";\r
+                \r
+                Here is the email message. Sent from the smtp client 📬\r
+                .\r
+                """;
+        assertEquals(String.format(expected, date), response);
     }
 
     /**
@@ -105,7 +119,7 @@ public class WorkerTest {
     @Test
     @Order(6)
     public void quitTest() {
-        String response = worker.work("250 OK\r\n");
+        String response = worker.work("250 OK");
         assertEquals("QUIT\r\n", response);
     }
 }
