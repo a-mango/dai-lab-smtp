@@ -38,8 +38,11 @@ public class Handler implements Runnable {
             var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8))) {
          String line;
          while ((line = in.readLine()) != null && worker.getCurrentCommand() != SmtpCommand.QUIT) {
-            out.write(worker.work(line));
-            out.flush();
+            String response = worker.work(line);
+            if (!response.isEmpty()) {
+               out.write(response);
+               out.flush();
+            }
          }
       } catch (Exception e) {
          System.err.println("Error: " + e.getMessage());

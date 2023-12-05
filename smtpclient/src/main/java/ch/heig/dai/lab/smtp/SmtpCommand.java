@@ -7,11 +7,18 @@ package ch.heig.dai.lab.smtp;
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
 public enum SmtpCommand {
+    /**
+     * The WAIT step.
+     */
     WAIT(""),
     /**
      * The HELO step.
      */
     EHLO("EHLO %s\r\n"),
+    /**
+     * The SMTP extension step.
+     */
+    EXT(""), // Don't answer anything
     /**
      * The MAIL step.
      */

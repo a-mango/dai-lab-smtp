@@ -44,9 +44,9 @@ public class WorkerTest {
     @Test
     public void badRequestTest() {
         // Voluntary shadowing to avoid modifying the state of the shared worker.
-        Worker worker = new Worker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the message"));
-        assertEquals("QUIT\r\n", worker.work("500 Syntax error, command unrecognized"));
-        assertEquals("QUIT\r\n", worker.work("501 Syntax error in parameters or arguments"));
+        Worker worker = new Worker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC"));
+        assertEquals("QUIT\r\n", worker.work("500 Syntax error, command unrecognized\r\n"));
+        assertEquals("QUIT\r\n", worker.work("501 Syntax error in parameters or arguments\r\n"));
     }
 
     /**
@@ -65,7 +65,8 @@ public class WorkerTest {
     @Test
     @Order(2)
     public void mailTest() {
-        String response = worker.work("250-foo.com greets localhost\r\n250-8BITMIME\r\n250-SIZE\r\n250-DSN\r\n250- HELP");
+//        String response = worker.work("250-foo.com greets localhost\r\n250-8BITMIME\r\n250-SIZE\r\n250-DSN\r\n250- HELP");
+        String response = worker.work("250 foo.com greets localhost\r\n");
         assertEquals("MAIL FROM: <s@test.com>\r\n", response);
     }
 

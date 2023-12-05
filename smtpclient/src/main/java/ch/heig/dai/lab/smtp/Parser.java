@@ -3,8 +3,10 @@ package ch.heig.dai.lab.smtp;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Stack;
 
 /**
  * Parse the content of the target lists and form groups from the data.
@@ -28,10 +30,13 @@ public class Parser {
     Parser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
         this.groups = new Mail[groupCount];
 
-        String[] victims = parseFile(victimFile);
-        String[] messages = parseFile(messageFile);
+        // shuffle to have different order of messages each time the attack is ran
+        Stack<String> victims = parseFile(victimFile);
+        Collections.shuffle(victims);
+        Stack<String> messages = parseFile(messageFile);
+        Collections.shuffle(messages);
 
-        if (victims.length == 0 || messages.length == 0)
+        if (victims.isEmpty() || messages.isEmpty())
             throw new IllegalArgumentException("The victim or message file is empty.");
 
         for (int i = 0; i < groupCount; i++) {
@@ -49,10 +54,13 @@ public class Parser {
      * @param path The path of the file to parse.
      * @return The parsed content of the file.
      */
-    private static String[] parseFile(String path) throws FileNotFoundException {
+    private static Stack<String> parseFile(String path) throws FileNotFoundException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (var in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(classloader.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
-            return in.lines().toArray(String[]::new);
+        try (var in = new BufferedReader(new InputStreamReader(
+                Objects.requireNonNull(classloader.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
+            Stack<String> tmp = new Stack<String>();
+            tmp.addAll(in.lines().toList());
+            return tmp;
         } catch (Exception e) {
             throw new FileNotFoundException("File not found: " + path);
         }
@@ -64,7 +72,7 @@ public class Parser {
      * @param messages The message to select
      * @return The selected message.
      */
-    private String selectMessage(String[] messages) {
+    private String selectMessage(Stack<String> messages) {
         return selectCandidate(messages);
     }
 
@@ -74,9 +82,11 @@ public class Parser {
      * @param candidates The list of candidates.
      * @return The selected candidate.
      */
-    private String selectCandidate(String[] candidates) {
-        Random rand = new Random();
-        return candidates[rand.nextInt(candidates.length)];
+    private String selectCandidate(Stack<String> candidates) {
+        if (candidates.isEmpty())
+            throw new IllegalArgumentException("Victim file not large enough.");
+
+        return candidates.pop();
     }
 
     /**
@@ -85,7 +95,7 @@ public class Parser {
      * @param candidates The pool of candidates.
      * @return An array of selected candidates.
      */
-    private String[] selectReceivers(String[] candidates) {
+    private String[] selectReceivers(Stack<String> candidates) {
         Random rand = new Random();
         int size = rand.nextInt(4) + 2;
 
@@ -102,7 +112,8 @@ public class Parser {
      * @return The list of emails containing the victims and message aggregations.
      */
     public Mail[] getGroups() {
-        if (this.groups == null) return null;
+        if (this.groups == null)
+            return null;
         return Arrays.copyOf(this.groups, this.groups.length);
     }
 }
