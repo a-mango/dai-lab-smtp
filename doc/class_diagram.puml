@@ -9,12 +9,10 @@ skinparam linetype ortho
 
 class GroupParser {
   + GroupParser(String, String, int):
-  - groups: Mail[]
   - selectReceivers(Stack<String>): String[]
   - selectMessage(Stack<String>): String
-  - parseFile(String): Stack<String>
   - selectCandidate(Stack<String>): String
-   groups: Mail[]
+  - {static} parseFile(String): Stack<String>
 }
 entity Mail << record >> {
   + Mail(String, String[], String):
@@ -23,14 +21,15 @@ entity Mail << record >> {
   + sender(): String
 }
 class MailWorker {
+  - currentRecipientIndex: boolean
   + MailWorker(Mail):
-  - currentCommand: SmtpCommand
-  - handleResponse(): String
   + work(String): String
   - handleRequest(String): void
-   currentCommand: SmtpCommand
+  - handleResponse(): String
 }
 class SmtpClient {
+  - {static} SERVER_SOCKET: int
+  - {static} SERVER_ADDRESS: String
   + SmtpClient(String, String, int):
   + main(String[]): void
   + execute(): void
@@ -38,32 +37,29 @@ class SmtpClient {
 enum SmtpCommand << enumeration >> {
   - SmtpCommand(String):
   - value: String
-  + values(): SmtpCommand[]
-  + valueOf(String): SmtpCommand
   + next(): SmtpCommand
-   value: String
 }
 class SmtpHandler {
+  - socket: Socket
   + SmtpHandler(Socket, MailWorker):
   + run(): void
 }
 enum SmtpStatus << enumeration >> {
   - SmtpStatus(String):
-  + valueOf(String): SmtpStatus
-  + values(): SmtpStatus[]
+  - code: String
   + code(): String
 }
 
 GroupParser "1" *--> "*" Mail : "groups"
-GroupParser  ..>  Mail        : "«create»"
+GroupParser  ..>  Mail        : "create"
 MailWorker  "1" *--> "1" Mail : "mail"
 MailWorker  "1" *--> "1" SmtpCommand : "currentCommand"
-SmtpClient   ..>  GroupParser : "«uses»"
+SmtpClient   ..>  GroupParser : "uses"
 SmtpClient  "1" *--> "*" Mail : mails
-SmtpClient   ..>  MailWorker  : "«create»"
-SmtpClient   ..>  SmtpHandler : "«create»"
+SmtpClient ..>  MailWorker  : "create"
+SmtpClient ..>  SmtpHandler : "create"
 SmtpHandler "1" *--> "1" MailWorker : "worker"
-MailWorker .l.> SmtpStatus: "«uses»"
+MailWorker .l.> SmtpStatus: "uses"
 
 Note left of SmtpCommand: Stores the format\nof the commands
 Note top of SmtpStatus: Stores the value\nof the status codes
