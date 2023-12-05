@@ -45,11 +45,11 @@ enum SmtpStatus {
 class Parser {
     - groups: Mail[]
     Parser(victimFile: String, messageFile: String, groupCount: int)
-    - selectMessage(messages: String[]): String
-    - selectCandidate(candidates: String[]): String
-    - selectVictims(candidates: String[]): String[]
+    - selectMessage(messages: Stack<String>): String
+    - selectCandidate(candidates: Stack<String>): String
+    - selectVictims(candidates: Stack<String>): String[]
     + getGroups(): Mail[]
-    {static} - parseFile(String path) : String[]
+    {static} - parseFile(String path) : Stack<String>
 }
 
 class Mail {

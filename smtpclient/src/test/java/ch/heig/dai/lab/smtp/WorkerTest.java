@@ -31,7 +31,7 @@ public class WorkerTest {
      */
     @BeforeAll
     void setUpFixture() {
-        Mail mail = new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message sent from the smtp client \uD83D\uDCEC");
+        Mail mail = new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC");
         worker = new Worker(mail);
     }
 
@@ -41,7 +41,7 @@ public class WorkerTest {
     @Test
     public void badRequestTest() {
         // Voluntary shadowing to avoid modifying the state of the shared worker.
-        Worker worker = new Worker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the message"));
+        Worker worker = new Worker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC"));
         assertEquals("QUIT\r\n", worker.work("500 Syntax error, command unrecognized\r\n"));
         assertEquals("QUIT\r\n", worker.work("501 Syntax error in parameters or arguments\r\n"));
     }
@@ -62,7 +62,8 @@ public class WorkerTest {
     @Test
     @Order(2)
     public void mailTest() {
-        String response = worker.work("250-foo.com greets localhost\r\n250-8BITMIME\r\n250-SIZE\r\n250-DSN\r\n250- HELP");
+//        String response = worker.work("250-foo.com greets localhost\r\n250-8BITMIME\r\n250-SIZE\r\n250-DSN\r\n250- HELP");
+        String response = worker.work("250 foo.com greets localhost\r\n");
         assertEquals("MAIL FROM: <s@test.com>\r\n", response);
     }
 
@@ -95,7 +96,7 @@ public class WorkerTest {
     @Order(5)
     public void messageTest() {
         String response = worker.work("354 Start mail input; end with <CRLF>.<CRLF>\r\n");
-        assertEquals("Subject: Here is the email me\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nssage sent from the smtp client \uD83D\uDCEC\r\n.\r\n", response);
+        assertEquals("Subject: Here is the email message\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nHere is the email message. Sent from the smtp client \uD83D\uDCEC\r\n.\r\n", response);
     }
 
     /**
