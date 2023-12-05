@@ -1,6 +1,6 @@
 @startuml
-skinparam MinClassWidth 130
-participant Actor
+skinparam MinClassWidth 100
+actor Actor
 Actor -> SmtpHandler : run
 activate SmtpHandler
 loop
