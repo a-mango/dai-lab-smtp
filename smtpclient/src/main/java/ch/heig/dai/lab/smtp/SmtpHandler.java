@@ -13,9 +13,9 @@ import static java.nio.charset.StandardCharsets.*;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public class Handler implements Runnable {
+public class SmtpHandler implements Runnable {
    final Socket socket;
-   final Worker worker;
+   final MailWorker worker;
 
    /**
     * Create a Handler.
@@ -24,7 +24,7 @@ public class Handler implements Runnable {
     * @param worker worker to send the mail to the server, compute each process of
     *               the mail sending
     */
-   Handler(Socket socket, Worker worker) {
+   SmtpHandler(Socket socket, MailWorker worker) {
       this.socket = socket;
       this.worker = worker;
    }

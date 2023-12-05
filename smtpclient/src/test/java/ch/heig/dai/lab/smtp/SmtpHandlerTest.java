@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public class HandlerTest {
+public class SmtpHandlerTest {
     /**
      * Test that handler successfully answers over a network socket. Works locally but not on GitHub Actions.
      */
@@ -29,8 +29,8 @@ public class HandlerTest {
             var in = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8));
             var out = new BufferedWriter(new OutputStreamWriter(server.getOutputStream(), StandardCharsets.UTF_8))) {
             var mail = new Mail("sender", new String[]{"receiver"}, "message");
-            var worker = new Worker(mail);
-            var handler = new Handler(client, worker); // Create a handler. Any thrown error will make this test fail.
+            var worker = new MailWorker(mail);
+            var handler = new SmtpHandler(client, worker); // Create a handler. Any thrown error will make this test fail.
 
             new Thread(handler).start(); // Run the runnable in a separate thread.
 

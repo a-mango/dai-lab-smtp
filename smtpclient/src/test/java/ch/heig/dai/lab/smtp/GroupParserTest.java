@@ -12,15 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
- * @see Parser
+ * @see GroupParser
  */
-public class ParserTest {
+public class GroupParserTest {
     /**
      * Test that the parser exits correctly when the input files does not exist.
      */
     @Test
     public void missingFileThrowsTest() {
-        assertThrows(FileNotFoundException.class, () -> new Parser("empty.txt", "missing.txt", 1));
+        assertThrows(FileNotFoundException.class, () -> new GroupParser("empty.txt", "missing.txt", 1));
     }
 
     /**
@@ -28,7 +28,7 @@ public class ParserTest {
      */
     @Test
     public void emptyFileThrowsTest() {
-        assertThrows(Exception.class, () -> new Parser("empty.txt", "empty.txt", 1));
+        assertThrows(Exception.class, () -> new GroupParser("empty.txt", "empty.txt", 1));
     }
 
     /**
@@ -38,7 +38,7 @@ public class ParserTest {
     public void groupFormationTest() throws FileNotFoundException {
         // Run a few iterations to make sure the groups are of correct length.
         for (int i = 0; i < 20; i++) {
-            Parser parser = new Parser("victims.txt", "messages.txt", 1);
+            GroupParser parser = new GroupParser("victims.txt", "messages.txt", 1);
             Mail[] groups = parser.getGroups();
             assertEquals(1, groups.length);
             assertNotNull(groups[0].sender());
@@ -52,9 +52,9 @@ public class ParserTest {
      */
     @Test
     public void shuffleListTest() throws FileNotFoundException {
-        Parser parser1 = new Parser("victims.txt", "messages.txt", 5);
+        GroupParser parser1 = new GroupParser("victims.txt", "messages.txt", 5);
         Mail[] groups1 = parser1.getGroups();
-        Parser parser2 = new Parser("victims.txt", "messages.txt", 5);
+        GroupParser parser2 = new GroupParser("victims.txt", "messages.txt", 5);
         Mail[] groups2 = parser2.getGroups();
         assertTrue(!Arrays.deepEquals(groups1, groups2));
     }

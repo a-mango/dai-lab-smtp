@@ -15,7 +15,7 @@ import java.util.Date;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public class Worker {
+public class MailWorker {
     /**
      * The mail to be sent by the worker.
      */
@@ -36,7 +36,7 @@ public class Worker {
      *
      * @param mail The mail to be sent by the worker.
      */
-    Worker(Mail mail) {
+    MailWorker(Mail mail) {
         this.mail = mail;
         this.currentCommand = SmtpCommand.WAIT;
     }

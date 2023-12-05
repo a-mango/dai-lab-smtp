@@ -1,4 +1,4 @@
-import ch.heig.dai.lab.smtp.Client;
+import ch.heig.dai.lab.smtp.SmtpClient;
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.classic.methods.HttpGet;
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -58,7 +58,7 @@ public class MainTest {
 
         // Send a mail with the client.
         String[] args = {"victims.txt", "messages.txt", String.valueOf(3)};
-        Client.main(args);
+        SmtpClient.main(args);
 
         // Check that the mail was received.
         String address = "http://localhost:" + container.getServicePort(HOST, HTTP_PORT) + "/email";
