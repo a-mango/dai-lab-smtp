@@ -24,7 +24,7 @@ public class SmtpHandler implements Runnable {
     * @param worker worker to send the mail to the server, compute each process of
     *               the mail sending
     */
-   SmtpHandler(Socket socket, MailWorker worker) {
+   public SmtpHandler(Socket socket, MailWorker worker) {
       this.socket = socket;
       this.worker = worker;
    }

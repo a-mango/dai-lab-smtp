@@ -34,7 +34,7 @@ public class SmtpClient {
      * @param messageFile File containing the message to send to the victims.
      * @param groupCount  Number of groups.
      */
-    SmtpClient(String victimFile, String messageFile, int groupCount) {
+    public SmtpClient(String victimFile, String messageFile, int groupCount) {
         Mail[] mails;
         try {
             var parser = new GroupParser(victimFile, messageFile, groupCount);
