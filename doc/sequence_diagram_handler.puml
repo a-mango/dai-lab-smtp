@@ -1,0 +1,159 @@
+@startuml
+skinparam MinClassWidth 130
+participant Actor
+Actor -> SmtpHandler : run
+activate SmtpHandler
+loop
+SmtpHandler <--] : Server request
+SmtpHandler -> MailWorker : work
+activate MailWorker
+MailWorker -> MailWorker : handleRequest
+activate MailWorker
+alt currentCommand
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.SERVICE_READY.code())
+MailWorker ->] : throw
+end
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+else EHLO
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.OK.code())
+MailWorker ->] : throw
+else 
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt request.startsWith(SmtpStatus.OK.code() + "-")
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+end
+end
+else EXT
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.OK.code())
+MailWorker ->] : throw
+else
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt request.startsWith(SmtpStatus.OK.code() + "-")
+end
+end
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+else MAIL|MESSAGE
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.OK.code())
+MailWorker ->] : throw
+end
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+else RCPT
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.OK.code())
+MailWorker ->] : throw
+else
+MailWorker -> Mail : receivers
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+alt currentRecipientIndex == mail.receivers().length
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+end
+end
+else DATA
+MailWorker -> SmtpStatus : code
+activate SmtpStatus
+SmtpStatus --> MailWorker
+deactivate SmtpStatus
+alt !request.startsWith(SmtpStatus.START_MAIL_INPUT.code())
+end
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+else QUIT
+alt !request.startsWith("221")
+end
+MailWorker -> SmtpCommand : next
+activate SmtpCommand
+SmtpCommand --> MailWorker
+deactivate SmtpCommand
+end
+MailWorker --> MailWorker
+deactivate MailWorker
+MailWorker -> MailWorker : handleResponse
+activate MailWorker
+alt currentCommand
+else WAIT
+else EHLO
+else EXT
+else MAIL
+MailWorker -> Mail : sender
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+else RCPT
+MailWorker -> Mail : receivers
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+else DATA
+MailWorker -> Mail : message
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+else MESSAGE
+MailWorker -> Mail : sender
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+MailWorker -> Mail : receivers
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+MailWorker -> Mail : message
+activate Mail
+Mail --> MailWorker
+deactivate Mail
+else QUIT
+end
+MailWorker --> MailWorker
+deactivate MailWorker
+MailWorker --> SmtpHandler
+deactivate MailWorker
+alt !response.isEmpty()
+SmtpHandler -->] : Client response
+end
+end
+return
+@enduml
