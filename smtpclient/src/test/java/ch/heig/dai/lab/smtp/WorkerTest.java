@@ -31,7 +31,7 @@ public class WorkerTest {
      */
     @BeforeAll
     void setUpFixture() {
-        Mail mail = new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message sent from the smtp client \uD83D\uDCEC");
+        Mail mail = new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client.\uD83D\uDCEC");
         worker = new Worker(mail);
     }
 
@@ -95,7 +95,7 @@ public class WorkerTest {
     @Order(5)
     public void messageTest() {
         String response = worker.work("354 Start mail input; end with <CRLF>.<CRLF>\r\n");
-        assertEquals("Subject: Here is the email me\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nssage sent from the smtp client \uD83D\uDCEC\r\n.\r\n", response);
+        assertEquals("Subject: Here is the email message\r\nContent-Type: plain/text; charset=\"UTF-16\";\r\n\r\nHere is the email message. Sent from the smtp client.\uD83D\uDCEC\r\n.\r\n", response);
     }
 
     /**
