@@ -72,19 +72,19 @@ public class Worker {
                 yield currentCommand.next();
             }
             case EHLO -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
-                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand.next();
+                else if (request.startsWith(SmtpStatus.OK.code() + "-")) yield currentCommand.next();
                 yield SmtpCommand.MAIL;
             }
             case EXT -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
-                else if (request.startsWith(SmtpStatus.OK.getKey() + "-")) yield currentCommand;
+                else if (request.startsWith(SmtpStatus.OK.code() + "-")) yield currentCommand;
                 yield currentCommand.next();
             }
             case MAIL, MESSAGE -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }
