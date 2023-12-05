@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public class Client {
+public class SmtpClient {
     /**
      * The port of the server.
      */
@@ -34,10 +34,10 @@ public class Client {
      * @param messageFile File containing the message to send to the victims.
      * @param groupCount  Number of groups.
      */
-    Client(String victimFile, String messageFile, int groupCount) {
+    SmtpClient(String victimFile, String messageFile, int groupCount) {
         Mail[] mails;
         try {
-            var parser = new Parser(victimFile, messageFile, groupCount);
+            var parser = new GroupParser(victimFile, messageFile, groupCount);
             mails = parser.getGroups();
         } catch (FileNotFoundException e) {
             mails = null;
@@ -76,7 +76,7 @@ public class Client {
         }
 
         // Create and start the client.
-        Client client = new Client(victimFile, messageFile, groupCount);
+        SmtpClient client = new SmtpClient(victimFile, messageFile, groupCount);
         client.execute();
     }
 
@@ -86,7 +86,7 @@ public class Client {
     public void execute() {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             for (Mail mail : mails) {
-                executor.execute(new Handler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new Worker(mail)));
+                executor.execute(new SmtpHandler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new MailWorker(mail)));
             }
         } catch (Exception e) {
             System.out.println("Error : " + e);

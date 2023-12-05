@@ -14,7 +14,7 @@ import java.util.Stack;
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
  */
-public class Parser {
+public class GroupParser {
     /**
      * The groups formed by the parser.
      */
@@ -27,7 +27,7 @@ public class Parser {
      * @param messageFile The list of potential messages.
      * @param groupCount  The number of groups to create.
      */
-    Parser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
+    GroupParser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
         this.groups = new Mail[groupCount];
 
         // shuffle to have different order of messages each time the attack is ran

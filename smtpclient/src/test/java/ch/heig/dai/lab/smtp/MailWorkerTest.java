@@ -16,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class WorkerTest {
+public class MailWorkerTest {
     /**
      * Reusable worker for the tests.
      */
-    private static Worker worker;
+    private static MailWorker worker;
 
     /**
      * Constructor
      */
-    WorkerTest() {
+    MailWorkerTest() {
 
     }
 
@@ -35,7 +35,7 @@ public class WorkerTest {
     @BeforeAll
     void setUpFixture() {
         Mail mail = new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC");
-        worker = new Worker(mail);
+        worker = new MailWorker(mail);
     }
 
     /**
@@ -44,7 +44,7 @@ public class WorkerTest {
     @Test
     public void badRequestTest() {
         // Voluntary shadowing to avoid modifying the state of the shared worker.
-        Worker worker = new Worker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC"));
+        MailWorker worker = new MailWorker(new Mail("s@test.com", new String[]{"a@test.com", "b@test.com"}, "Here is the email message. Sent from the smtp client \uD83D\uDCEC"));
         assertEquals("QUIT\r\n", worker.work("500 Syntax error, command unrecognized\r\n"));
         assertEquals("QUIT\r\n", worker.work("501 Syntax error in parameters or arguments\r\n"));
     }
