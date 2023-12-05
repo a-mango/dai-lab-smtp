@@ -3,6 +3,7 @@ package ch.heig.dai.lab.smtp;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,5 +45,17 @@ public class ParserTest {
             assertTrue(groups[0].receivers().length >= 2 && groups[0].receivers().length <= 5);
             assertNotNull(groups[0].message());
         }
+    }
+
+    /**
+     * Test that the shuffle works correctly
+     */
+    @Test
+    public void shuffleListTest() throws FileNotFoundException {
+        Parser parser1 = new Parser("victims.txt", "messages.txt", 5);
+        Mail[] groups1 = parser1.getGroups();
+        Parser parser2 = new Parser("victims.txt", "messages.txt", 5);
+        Mail[] groups2 = parser2.getGroups();
+        assertTrue(!Arrays.deepEquals(groups1, groups2));
     }
 }
