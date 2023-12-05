@@ -64,7 +64,7 @@ public class Worker {
     private void handleRequest(String request) {
         currentCommand = switch (currentCommand) {
             case WAIT -> {
-                if (!request.startsWith(SmtpStatus.SERVICE_READY.getKey()))
+                if (!request.startsWith(SmtpStatus.SERVICE_READY.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }
@@ -86,13 +86,13 @@ public class Worker {
                 yield currentCommand.next();
             }
             case RCPT -> {
-                if (!request.startsWith(SmtpStatus.OK.getKey()))
+                if (!request.startsWith(SmtpStatus.OK.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 else if (currentRecipientIndex == mail.receivers().length) yield currentCommand.next();
                 yield currentCommand;
             }
             case DATA -> {
-                if (!request.startsWith(SmtpStatus.START_MAIL_INPUT.getKey()))
+                if (!request.startsWith(SmtpStatus.START_MAIL_INPUT.code()))
                     throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }

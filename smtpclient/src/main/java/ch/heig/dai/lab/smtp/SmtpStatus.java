@@ -1,8 +1,7 @@
 package ch.heig.dai.lab.smtp;
 
 /**
- * Represent the SMTP server codes, human-readable names and their associated
- * messages.
+ * Represent the SMTP server codes.
  *
  * @author Aubry Mangold <aubry.mangold@heig-vd.ch>
  * @author Hugo Germano <hugo.germano@heig-vd.ch>
@@ -11,56 +10,40 @@ public enum SmtpStatus {
     /**
      * The requested action was not taken and the error condition is temporary
      */
-    SERVICE_READY("220", "Service ready"),
+    SERVICE_READY("220"),
     /**
      * The requested action was not taken and the error condition is permanent
      */
-    SERVICE_CLOSING("221", "Service closing transmission channel"),
+    SERVICE_CLOSING("221"),
     /**
      * The server is ready to accept a message from the client
      */
-    OK("250", "Requested mail action okay, completed"),
+    OK("250"),
     /**
      * The server is unable to send the e-mail
      */
-    START_MAIL_INPUT("354", "Start mail input; end with <CRLF>.<CRLF>");
+    START_MAIL_INPUT("354");
 
     /**
-     * The key of the enum
+     * The code of the enum
      */
-    private final String key;
-
-    /**
-     * The value of the enum
-     */
-    private final String value;
+    private final String code;
 
     /**
      * Constructor
      *
-     * @param key   The key
-     * @param value The value
+     * @param code   The status code
      */
-    SmtpStatus(String key, String value) {
-        this.key = key;
-        this.value = value;
+    SmtpStatus(String code) {
+        this.code = code;
     }
 
     /**
-     * Get the key
+     * Get the code
      *
      * @return The key
      */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Get the value
-     *
-     * @return The value
-     */
-    public String getValue() {
-        return value;
+    public String code() {
+        return code;
     }
 }
