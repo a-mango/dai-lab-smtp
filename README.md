@@ -4,15 +4,17 @@
 
 ## Description
 
-[//]: # (TODO)
+This client allow you to play e-mail pranks on a list of victims. You need to provide a list of victims (a list of e-mail) and a list of messages, both in *.txt format encoded on UTF-8. You need to specify the number of group on which the prank is played. The sender of the mail will be chose randomly from the victims list. Receivers' group of the mail will be randomly selected from the victim list as well. The content of the mail will be randomly selected from the list of message. By default, the prank is played on a mock server run on docker, you can change that by editing a file.
 
 ## Setup
 
-To run the project, first set up the [MailDev](https://github.com/maildev/maildev) fake SMTP server:
+If you want to use a mock SMTP server,set up the [MailDev](https://github.com/maildev/maildev) fake SMTP server:
 
 ```bash
 docker compose up
 ```
+
+The default value play the prank on this mock server, otherwise see at [Settings](##Settings) how to change the server on which the prank is played.
 
 Then build the project using the following command:
 
@@ -23,17 +25,50 @@ mvn -f smtpclient/pom.xml clean:package
 Finally, you can run the project by executing the JAR package:
 
 ```bash
-java -jar smtpclient/target/smtpclient-1.0-SNAPSHOT <arguments>
+java -jar smtpclient/target/smtpclient-1.0-SNAPSHOT <pathToTheVictimsList> <pathToTheMessageList> <numberOfGroupToPrank>
 ```
 
-## Using smtpclient
+## Settings
 
-[//]: # (TODO)
+You can modify the members SERVER_SOCKET and SERVER_ADDRESS at [SmtpClient.java](smtpclient/src/main/java/ch/heig/dai/lab/smtp/SmtpClient.java ) to adjust the server you want to play the prank.
 
-## Documentation
+```java
+...
+/**
+* The port of the server.
+*/
+final static int SERVER_SOCKET = 1025;
 
-[//]: # (TODO)
+/**
+* The address of the server.
+*/
+final static String SERVER_ADDRESS = "localhost";
+...
+```
 
-## Showcase
+## Implementation
 
-[//]: # (TODO)
+There is four classes and two enum and one record.
+
+Client:
+
+- SmtpClient: Check if the arguments are valid and launch SmtpHandler, use GroupParser to get a list of Record Mail on which the prank will be player
+- GroupParser: Parse the victims and messages files, generate randomly Mail record with the parsed content.
+- SmtpHandler: Does the process answer-response with the mail server, use MailWorker to answer to the server.
+- MailWorker: Know which answers to give to the SMTP server at what step.
+
+Record: Mail: Used to store the sender, receivers and content of the mail.
+
+Enum:
+
+- SmtpStatus : each status message from the server,
+- SmtpCommand: SMTP command to use to answer to the server
+
+### Sequence diagram
+
+
+
+### UML diagram
+
+
+
