@@ -13,6 +13,19 @@ import java.util.concurrent.Executors;
  */
 public class SmtpClient {
     /**
+     * Program banner
+     */
+    final static String BANNER = """
+                                  dP                     dP oo                     dP  \s
+                                  88                     88                        88  \s
+            .d8888b. 88d8b.d8b. d8888P 88d888b. .d8888b. 88 dP .d8888b. 88d888b. d8888P\s
+            Y8ooooo. 88'`88'`88   88   88'  `88 88'  `"" 88 88 88ooood8 88'  `88   88  \s
+                  88 88  88  88   88   88.  .88 88.  ... 88 88 88.  ... 88    88   88  \s
+            `88888P' dP  dP  dP   dP   88Y888P' `88888P' dP dP `88888P' dP    dP   dP  \s
+                                       88                                              \s
+                                       dP                         by Balkghar & a-mango\s
+            """;
+    /**
      * The port of the server.
      */
     final static int SERVER_SOCKET = 1025;
@@ -63,6 +76,9 @@ public class SmtpClient {
             System.err.println(usage);
             System.exit(1);
         }
+
+        // Print the banner.
+        System.out.println(BANNER);
 
         // Parse the arguments.
         String victimFile = args[0];
