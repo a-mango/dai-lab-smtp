@@ -4,75 +4,63 @@ skinparam classAttributeIconSize 0
 skinparam groupInheritance 3
 hide empty methods
 hide empty members
+top to bottom direction
+skinparam linetype ortho
 
-class Client {
-    {static} + main(args: String[]): void
-    - mails: Mail[]
-    + Client(victimFile: String, messageFile: String, groupCount: int)
-    + execute(): void
+class GroupParser {
+  + GroupParser(String, String, int):
+  - selectReceivers(Stack<String>): String[]
+  - selectMessage(Stack<String>): String
+  - selectCandidate(Stack<String>): String
+  - {static} parseFile(String): Stack<String>
+}
+entity Mail << record >> {
+  + Mail(String, String[], String):
+  + receivers(): String[]
+  + message(): String
+  + sender(): String
+}
+class MailWorker {
+  - currentRecipientIndex: boolean
+  + MailWorker(Mail):
+  + work(String): String
+  - handleRequest(String): void
+  - handleResponse(): String
+}
+class SmtpClient {
+  - {static} SERVER_SOCKET: int
+  - {static} SERVER_ADDRESS: String
+  + SmtpClient(String, String, int):
+  + main(String[]): void
+  + execute(): void
+}
+enum SmtpCommand << enumeration >> {
+  - SmtpCommand(String):
+  - value: String
+  + next(): SmtpCommand
+}
+class SmtpHandler {
+  - socket: Socket
+  + SmtpHandler(Socket, MailWorker):
+  + run(): void
+}
+enum SmtpStatus << enumeration >> {
+  - SmtpStatus(String):
+  - code: String
+  + code(): String
 }
 
-class Handler {
-    - socket: Socket
-    - worker: Worker
-    Handler(socket: Socket, worker: Worker)
-    + run() : void
-}
+GroupParser "1" *--> "*" Mail : "groups"
+GroupParser  ..>  Mail        : "create"
+MailWorker  "1" *--> "1" Mail : "mail"
+MailWorker  "1" *--> "1" SmtpCommand : "currentCommand"
+SmtpClient   ..>  GroupParser : "uses"
+SmtpClient  "1" *--> "*" Mail : mails
+SmtpClient ..>  MailWorker  : "create"
+SmtpClient ..>  SmtpHandler : "create"
+SmtpHandler "1" *--> "1" MailWorker : "worker"
+MailWorker .l.> SmtpStatus: "uses"
 
-class Worker {
-    Worker(Mail mail)
-    + work(message: String) : String
-    - identity(): String
-    - mailHeader(): String
-    - mailBody(): String
-}
-
-enum SmtpCommand {
-    EHLO
-    MAIL
-    RCPT
-    DATA
-    QUIT
-}
-
-enum SmtpStatus {
-    220
-    221
-    250
-    354
-}
-
-class Parser {
-    - groups: Mail[]
-    Parser(victimFile: String, messageFile: String, groupCount: int)
-    - selectMessage(messages: Stack<String>): String
-    - selectCandidate(candidates: Stack<String>): String
-    - selectVictims(candidates: Stack<String>): String[]
-    + getGroups(): Mail[]
-    {static} - parseFile(String path) : Stack<String>
-}
-
-class Mail {
-    - sender: String
-    - receivers: String[]
-    - message: String
-    Mail(sender: String, receivers: String[], message: String)
-    + getSender(): String
-    + getReceivers(): String[]
-    + getMessage(): String
-}
-
-note right of Mail: Java Record
-
-
-interface Runnable
-
-Client ..> Handler
-Client ..> Parser
-Handler .down.> Worker
-Runnable .right.|> Handler
-Parser ..> Mail
-Worker "*" -right-> "1" Mail : "Message >"
-Worker "*" -left-> "1" SmtpCommand : "State >"
-Worker .down.> SmtpStatus
+Note left of SmtpCommand: Stores the format\nof the commands
+Note top of SmtpStatus: Stores the value\nof the status codes
 @enduml
