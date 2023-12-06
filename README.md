@@ -64,11 +64,32 @@ Enum:
 - SmtpStatus : each status message from the server,
 - SmtpCommand: SMTP command to use to answer to the server
 
-### Sequence diagram
-
-
-
 ### UML diagram
 
+![diagramUml](./figures/class_diagram.svg)
 
+## Example
+
+```
+user@pc:~$ java -jar smtpclient-1.0-SNAPSHOT.jar victims.txt messages.txt 3
+                      dP                     dP oo                     dP   
+                      88                     88                        88   
+.d8888b. 88d8b.d8b. d8888P 88d888b. .d8888b. 88 dP .d8888b. 88d888b. d8888P 
+Y8ooooo. 88'`88'`88   88   88'  `88 88'  `"" 88 88 88ooood8 88'  `88   88   
+      88 88  88  88   88   88.  .88 88.  ... 88 88 88.  ... 88    88   88   
+`88888P' dP  dP  dP   dP   88Y888P' `88888P' dP dP `88888P' dP    dP   dP   
+                           88                                               
+                           dP                         by Balkghar & a-mango 
+
+> Victim file: victims.txt
+> Message file: messages.txt
+> Group count: 3
+> Server: localhost:1025
+> Do you want to continue? [y/N] y
+> Starting virtual threads...
+> Sending mail from proin.mi@icloud.edu to 4 recipients...
+> Sending mail from magna.ut.tincidunt@icloud.com to 2 recipients...
+> Sending mail from fermentum.metus.aenean@google.org to 3 recipients...
+> All mails sent.
+```
 
