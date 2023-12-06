@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+skinparam groupInheritance 3
+hide empty methods
+hide empty members
+top to bottom direction
+skinparam linetype ortho
+
+class GroupParser {
+  + GroupParser(String, String, int):
+  - selectReceivers(Stack<String>): String[]
+  - selectMessage(Stack<String>): String
+  - selectCandidate(Stack<String>): String
+  - {static} parseFile(String): Stack<String>
+}
+entity Mail << record >> {
+  + Mail(String, String[], String):
+  + receivers(): String[]
+  + message(): String
+  + sender(): String
+}
+class MailWorker {
+  - currentRecipientIndex: boolean
+  + MailWorker(Mail):
+  + work(String): String
+  - handleRequest(String): void
+  - handleResponse(): String
+}
+class SmtpClient {
+  - {static} SERVER_SOCKET: int
+  - {static} SERVER_ADDRESS: String
+  + SmtpClient(String, String, int):
+  + main(String[]): void
+  + execute(): void
+}
+enum SmtpCommand << enumeration >> {
+  - SmtpCommand(String):
+  - value: String
+  + next(): SmtpCommand
+}
+class SmtpHandler {
+  - socket: Socket
+  + SmtpHandler(Socket, MailWorker):
+  + run(): void
+}
+enum SmtpStatus << enumeration >> {
+  - SmtpStatus(String):
+  - code: String
+  + code(): String
+}
+
+GroupParser "1" *--> "*" Mail : "groups"
+GroupParser  ..>  Mail        : "create"
+MailWorker  "1" *--> "1" Mail : "mail"
+MailWorker  "1" *--> "1" SmtpCommand : "currentCommand"
+SmtpClient   ..>  GroupParser : "uses"
+SmtpClient  "1" *--> "*" Mail : mails
+SmtpClient ..>  MailWorker  : "create"
+SmtpClient ..>  SmtpHandler : "create"
+SmtpHandler "1" *--> "1" MailWorker : "worker"
+MailWorker .l.> SmtpStatus: "uses"
+
+Note left of SmtpCommand: Stores the format\nof the commands
+Note top of SmtpStatus: Stores the value\nof the status codes
+@enduml

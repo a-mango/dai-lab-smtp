@@ -1,0 +1,78 @@
+@startuml
+skinparam MinClassWidth 130
+actor Actor
+Actor -> SmtpClient : main
+activate SmtpClient
+alt args.length != argLength
+end
+create SmtpClient
+'SmtpClient -> SmtpClient : new
+activate SmtpClient
+create GroupParser
+SmtpClient -> GroupParser : new
+activate GroupParser
+GroupParser -> GroupParser : parseFile
+activate GroupParser
+GroupParser --> GroupParser
+deactivate GroupParser
+GroupParser -> GroupParser : parseFile
+activate GroupParser
+GroupParser --> GroupParser
+deactivate GroupParser
+alt victims.isEmpty() || messages.isEmpty()
+end
+loop i < groupCount
+GroupParser -> GroupParser : selectCandidate
+activate GroupParser
+alt candidates.isEmpty()
+end
+GroupParser --> GroupParser
+deactivate GroupParser
+GroupParser -> GroupParser : selectReceivers
+activate GroupParser
+loop i < size
+GroupParser -> GroupParser : selectCandidate
+activate GroupParser
+alt candidates.isEmpty()
+end
+GroupParser --> GroupParser
+deactivate GroupParser
+end
+GroupParser --> GroupParser
+deactivate GroupParser
+GroupParser -> GroupParser : selectMessage
+activate GroupParser
+GroupParser -> GroupParser : selectCandidate
+activate GroupParser
+alt candidates.isEmpty()
+end
+GroupParser --> GroupParser
+deactivate GroupParser
+GroupParser --> GroupParser
+deactivate GroupParser
+create Mail
+GroupParser -> Mail : new
+activate Mail
+Mail --> GroupParser
+deactivate Mail
+end
+GroupParser --> SmtpClient
+deactivate GroupParser
+SmtpClient --> SmtpClient
+deactivate SmtpClient
+SmtpClient -> SmtpClient : execute
+activate SmtpClient
+loop mails
+create MailWorker
+SmtpClient -> MailWorker : new
+activate MailWorker
+MailWorker --> SmtpClient
+deactivate MailWorker
+create SmtpHandler
+SmtpClient -> SmtpHandler : new
+activate SmtpHandler
+SmtpHandler --> SmtpClient
+deactivate SmtpHandler
+end
+return
+@enduml
