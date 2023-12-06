@@ -28,15 +28,18 @@ public class SmtpClient {
                                        88                                              \s
                                        dP                         by Balkghar & a-mango\s
             """;
+
+    final static String USAGE = "Usage: java -jar smtpclient.jar <victimFile> <messageFile> <groupCount> [uri]";
+
     /**
      * The port of the server.
      */
-    final static int SERVER_SOCKET = 1025;
+    static int SERVER_PORT = 1025;
 
     /**
      * The address of the server.
      */
-    final static String SERVER_ADDRESS = "localhost";
+    static String SERVER_ADDRESS = "localhost";
 
     /**
      * The mails to send to the server.
@@ -63,6 +66,17 @@ public class SmtpClient {
         this.mails = mails;
     }
 
+    public SmtpClient(String victimFile, String messageFile, int groupCount, String uri) {
+        this(victimFile, messageFile, groupCount);
+        try {
+            SERVER_ADDRESS = uri.split(":")[0];
+            SERVER_PORT = Integer.parseInt(uri.split(":")[1]);
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
     /**
      * Starting point of the program.
      *
@@ -71,12 +85,11 @@ public class SmtpClient {
      *             3rd argument is the number of groups
      */
     public static void main(String[] args) {
-        final String usage = "Usage: java -jar smtpclient.jar <victimFile> <messageFile> <groupCount>";
         int argLength = 3;
 
-        if (args.length != argLength) {
+        if (args.length < argLength || args.length > 4) {
             System.err.println("Error: " + argLength + " arguments are required.");
-            System.out.println(usage);
+            System.out.println(USAGE);
             System.exit(1);
         }
 
@@ -104,6 +117,11 @@ public class SmtpClient {
         System.out.println("> Victim file: " + victimFile);
         System.out.println("> Message file: " + messageFile);
         System.out.println("> Group count: " + groupCount);
+        if (args.length == 4) {
+            System.out.println("> Server: " + args[3]);
+        } else {
+            System.out.println("> Server: " + SERVER_ADDRESS + ":" + SERVER_PORT);
+        }
 
         // Ask for confirmation.
         System.out.print("> Do you want to continue? [y/N] ");
@@ -118,9 +136,13 @@ public class SmtpClient {
             System.exit(0);
         }
 
-        // Create and start the client.
-        SmtpClient client = new SmtpClient(victimFile, messageFile, groupCount);
-        client.execute();
+        // Create and start the client with all parameters if provided, and only 3 otherwise.
+        if (args.length == 4) {
+            String uri = args[3];
+            new SmtpClient(victimFile, messageFile, groupCount, uri).execute();
+        } else {
+            new SmtpClient(victimFile, messageFile, groupCount).execute();
+        }
     }
 
     /**
@@ -133,7 +155,7 @@ public class SmtpClient {
             ArrayList<Future<?>> futures = new ArrayList<>();
             for (Mail mail : mails) {
                 System.out.println("> Sending mail from " + mail.sender() + " to " + mail.receivers().length + " recipients...");
-                futures.add(executor.submit(new SmtpHandler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new MailWorker(mail))));
+                futures.add(executor.submit(new SmtpHandler(new Socket(SERVER_ADDRESS, SERVER_PORT), new MailWorker(mail))));
             }
 
             // Await for all futures to complete.

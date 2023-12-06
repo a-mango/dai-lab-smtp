@@ -35,12 +35,12 @@ public class MainTest {
     /**
      * The host SMTP port.
      */
-    public static int SMTP_PORT = 1025;
+    public static int SMTP_PORT = 8025;
 
     /**
      * The host HTTP port.
      */
-    public static int HTTP_PORT = 1080;
+    public static int HTTP_PORT = 8080;
 
     /**
      * The container used for the tests. The  `Raw use of parameterized class 'DockerComposeContainer'` warning is
@@ -66,7 +66,7 @@ public class MainTest {
         final int mailCount = 3;
 
         // Send a mail with the client.
-        String[] args = {"victims.txt", "messages.utf8", String.valueOf(3)};
+        String[] args = {"victims.txt", "messages.utf8", "3", "localhost:" + SMTP_PORT};
         SmtpClient.main(args);
 
         // Check that the mail was received.
