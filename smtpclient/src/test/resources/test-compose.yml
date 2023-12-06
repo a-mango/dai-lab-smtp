@@ -6,8 +6,8 @@ services:
     image: maildev/maildev
     environment:
       - TZ=Europe/Zurich
-      - MAILDEV_WEB_PORT=1080
-      - MAILDEV_SMTP_PORT=1025
+      - MAILDEV_WEB_PORT=8080
+      - MAILDEV_SMTP_PORT=8025
     ports:
-      - "1080:1080"
-      - "1025:1025"
+      - "8080:8080"
+      - "8025:8025"
