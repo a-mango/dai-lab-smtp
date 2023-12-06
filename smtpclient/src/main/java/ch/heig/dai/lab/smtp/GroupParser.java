@@ -27,7 +27,7 @@ public class GroupParser {
      * @param messageFile The list of potential messages.
      * @param groupCount  The number of groups to create.
      */
-    GroupParser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
+    public GroupParser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
         this.groups = new Mail[groupCount];
 
         // shuffle to have different order of messages each time the attack is ran
@@ -58,7 +58,7 @@ public class GroupParser {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (var in = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(classloader.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
-            Stack<String> tmp = new Stack<String>();
+            Stack<String> tmp = new Stack<>();
             tmp.addAll(in.lines().toList());
             return tmp;
         } catch (Exception e) {

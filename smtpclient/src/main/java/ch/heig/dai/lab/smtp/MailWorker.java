@@ -51,7 +51,7 @@ public class MailWorker {
         try {
             handleRequest(message);
             String response = handleResponse();
-            System.out.print(message + response);
+            System.out.print(message + "\n" + response);
             return response;
         } catch (IllegalStateException e) {
             System.err.println(e.getMessage());
