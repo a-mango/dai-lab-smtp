@@ -75,6 +75,12 @@ public class SmtpClient {
             System.exit(1);
         }
 
+        // Check that the groupCount is within acceptable bounds.
+        if (!(groupCount > 0 && groupCount <= 10)) {
+            System.err.println("Error: groupCount must be in [1, 10] range.");
+            System.exit(1);
+        }
+
         // Create and start the client.
         SmtpClient client = new SmtpClient(victimFile, messageFile, groupCount);
         client.execute();
