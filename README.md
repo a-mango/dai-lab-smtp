@@ -4,19 +4,15 @@
 
 ## Description
 
-This client allow you to play e-mail pranks on a list of victims. You need to provide a list of victims (a list of e-mail) and a list of messages, both in *.txt format encoded on UTF-8. You need to specify the number of group on which the prank is played. The sender of the mail will be chose randomly from the victims list. Receivers' group of the mail will be randomly selected from the victim list as well. The content of the mail will be randomly selected from the list of message. By default, the prank is played on a mock server run on docker, you can change that by editing a file.
-This client allow you to play e-mail pranks on a list of victims. You need to provide a list of victims (a list of e-mail) and a list of messages, both in*.txt format encoded on UTF-8. You need to specify the number of group on which the prank is played. The sender of the mail will be chose randomly from the victims list. Receivers' group of the mail will be randomly selected from the victim list as well. The content of the mail will be randomly selected from the list of message. By default, the prank is played on a mock server run on docker, you can change that by editing a file.
+This client allow you to play e-mail pranks on a list of victims. You need to provide a list of victims (a list of e-mail) and a list of messages, both in \*.txt format encoded on UTF-8. You need to specify the number of group on which the prank is played. The sender of the mail will be chose randomly from the victims list. Receivers' group of the mail will be randomly selected from the victim list as well. The content of the mail will be randomly selected from the list of message. By default, the prank is played on a mock server run on docker, you can change that by editing a file.
 
 ## Setup
 
-If you want to use a mock SMTP server,set up the [MailDev](https://github.com/maildev/maildev) fake SMTP server:
 If you want to use a mock SMTP server,set up the [MailDev](https://github.com/maildev/maildev) fake SMTP server:
 
 ```bash
 docker compose up
 ```
-
-The default value play the prank on this mock server, otherwise see at [Settings](##Settings) how to change the server on which the prank is played.
 
 The default value play the prank on this mock server, otherwise see at [Settings](##Settings) how to change the server on which the prank is played.
 
@@ -29,7 +25,6 @@ mvn -f smtpclient/pom.xml clean:package
 Finally, you can run the project by executing the JAR package:
 
 ```bash
-java -jar smtpclient/target/smtpclient-1.0-SNAPSHOT <pathToTheVictimsList> <pathToTheMessageList> <numberOfGroupToPrank>
 java -jar smtpclient/target/smtpclient-1.0-SNAPSHOT <pathToTheVictimsList> <pathToTheMessageList> <numberOfGroupToPrank>
 ```
 
