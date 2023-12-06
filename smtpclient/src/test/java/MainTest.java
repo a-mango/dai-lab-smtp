@@ -13,7 +13,9 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,7 +47,10 @@ public class MainTest {
      * supposed to get fixed with TestContainers v2.
      */
     @Container
-    public static DockerComposeContainer<?> container = new DockerComposeContainer(new File("src/test/resources/test-compose.yml")).withExposedService(HOST, HTTP_PORT).withExposedService(HOST, SMTP_PORT);
+    public static DockerComposeContainer<?> container = new DockerComposeContainer(
+            new File("src/test/resources/test-compose.yml"))
+            .withExposedService(HOST, HTTP_PORT)
+            .withExposedService(HOST, SMTP_PORT);
 
     /**
      * Integration test for the client program. The test uses the `maildev` container to check that the correct quantity
@@ -54,6 +59,10 @@ public class MainTest {
     @Test
     @Order(1)
     public void mailSentIsReceivedTest() {
+        InputStream standardIn = System.in; // backup System.in to restore it later
+        ByteArrayInputStream in = new ByteArrayInputStream("y".getBytes());
+        System.setIn(in);
+
         final int mailCount = 3;
 
         // Send a mail with the client.
@@ -82,6 +91,8 @@ public class MainTest {
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
+
+        System.setIn(standardIn); // restore System.in
     }
 
     /**
