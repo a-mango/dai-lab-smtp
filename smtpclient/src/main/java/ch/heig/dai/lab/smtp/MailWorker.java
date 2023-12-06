@@ -100,7 +100,8 @@ public class MailWorker {
                 yield currentCommand.next();
             }
             case QUIT -> {
-                if (!request.startsWith("221")) throw new IllegalStateException("Unexpected response: " + request);
+                if (!request.startsWith(SmtpStatus.SERVICE_CLOSING.code()))
+                    throw new IllegalStateException("Unexpected response: " + request);
                 yield currentCommand.next();
             }
         };
@@ -123,9 +124,10 @@ public class MailWorker {
                 var date = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date());
                 var sender = String.format("%s <%s>", mail.sender(), mail.sender());
                 var subject = mail.message().substring(0, mail.message().indexOf('.'));
+                var encodedSubject =  "=?utf-8?Q?" + subject + "?=";
                 var receivers = String.join(", ", mail.receivers());
                 var message = mail.message();
-                yield String.format(SmtpCommand.MESSAGE.getValue(), date, sender, subject, receivers, message);
+                yield String.format(SmtpCommand.MESSAGE.getValue(), date, sender, encodedSubject, receivers, message);
             }
             case QUIT -> String.format(SmtpCommand.QUIT.getValue());
         };
