@@ -30,14 +30,24 @@ public class GroupParser {
     public GroupParser(String victimFile, String messageFile, int groupCount) throws FileNotFoundException {
         this.groups = new Mail[groupCount];
 
-        // shuffle to have different order of messages each time the attack is ran
         Stack<String> victims = parseFile(victimFile);
-        Collections.shuffle(victims);
         Stack<String> messages = parseFile(messageFile);
-        Collections.shuffle(messages);
 
-        if (victims.isEmpty() || messages.isEmpty())
-            throw new IllegalArgumentException("The victim or message file is empty.");
+        // Validate the input files.
+        if (victims.isEmpty())
+            throw new IllegalArgumentException("The victim file is empty.");
+        else if (messages.isEmpty())
+            throw new IllegalArgumentException("The message file is empty.");
+        else if (!victims.get(0).matches("^(.+)@(\\S+)$"))
+            throw new IllegalArgumentException("The victim file contains invalid email addresses.");
+        else if (victims.size() < groupCount * 6) // An upper bound of 6 emails per group is needed.
+            throw new IllegalArgumentException("The victim file is not large enough.");
+        else if (messages.size() < groupCount)
+            throw new IllegalArgumentException("The message file is not large enough.");
+
+        // Shuffle to have different order of messages each time the attack is run.
+        Collections.shuffle(victims);
+        Collections.shuffle(messages);
 
         for (int i = 0; i < groupCount; i++) {
             String sender = selectCandidate(victims);
