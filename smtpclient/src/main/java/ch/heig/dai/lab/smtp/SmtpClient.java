@@ -2,8 +2,11 @@ package ch.heig.dai.lab.smtp;
 
 import java.io.FileNotFoundException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Send emails to an SMTP server.
@@ -73,7 +76,7 @@ public class SmtpClient {
 
         if (args.length != argLength) {
             System.err.println("Error: " + argLength + " arguments are required.");
-            System.err.println(usage);
+            System.out.println(usage);
             System.exit(1);
         }
 
@@ -97,6 +100,24 @@ public class SmtpClient {
             System.exit(1);
         }
 
+        // Recap the options for the user to see.
+        System.out.println("> Victim file: " + victimFile);
+        System.out.println("> Message file: " + messageFile);
+        System.out.println("> Group count: " + groupCount);
+
+        // Ask for confirmation.
+        System.out.print("> Do you want to continue? [y/N] ");
+        Scanner keyboard = new Scanner(System.in);
+        String input;
+        while (!(input = keyboard.nextLine()).equals("\n") && !input.equals("y") && !input.equals("N")) {
+            System.out.print("> Do you want to continue? [y/N] ");
+        }
+
+        if (input.equals("N")) {
+            System.out.println("Exiting...");
+            System.exit(0);
+        }
+
         // Create and start the client.
         SmtpClient client = new SmtpClient(victimFile, messageFile, groupCount);
         client.execute();
@@ -106,12 +127,24 @@ public class SmtpClient {
      * Execute the client. Create a new thread for each mail and send it to the server.
      */
     public void execute() {
+        System.out.println("> Starting virtual threads...");
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            // Futures list
+            ArrayList<Future<?>> futures = new ArrayList<>();
             for (Mail mail : mails) {
-                executor.execute(new SmtpHandler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new MailWorker(mail)));
+                System.out.println("> Sending mail from " + mail.sender() + " to " + mail.receivers().length + " recipients...");
+                futures.add(executor.submit(new SmtpHandler(new Socket(SERVER_ADDRESS, SERVER_SOCKET), new MailWorker(mail))));
             }
+
+            // Await for all futures to complete.
+            for (Future<?> future : futures) {
+                future.get();
+            }
+
+            // Confirm that all mails have been sent.
+            System.out.println("> All mails sent.");
         } catch (Exception e) {
-            System.out.println("Error : " + e);
+            System.err.println("Error: " + e);
         }
     }
 }
