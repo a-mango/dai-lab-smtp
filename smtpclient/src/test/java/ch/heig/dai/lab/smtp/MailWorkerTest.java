@@ -103,7 +103,7 @@ public class MailWorkerTest {
         String expected = """
                 Date: %s\r
                 From: s@test.com <s@test.com>\r
-                Subject: =?utf-8?Q?Here is the email message?=\r
+                Subject: =?utf-8?B?SGVyZSBpcyB0aGUgZW1haWwgbWVzc2FnZQ==?=\r
                 To: a@test.com, b@test.com\r
                 Content-Type: text/plain; charset=utf-8\r
                 \r

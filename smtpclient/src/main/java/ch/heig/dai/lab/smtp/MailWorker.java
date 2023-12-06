@@ -1,6 +1,7 @@
 package ch.heig.dai.lab.smtp;
 
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -124,7 +125,7 @@ public class MailWorker {
                 var date = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date());
                 var sender = String.format("%s <%s>", mail.sender(), mail.sender());
                 var subject = mail.message().substring(0, mail.message().indexOf('.'));
-                var encodedSubject =  "=?utf-8?Q?" + subject + "?=";
+                var encodedSubject =  "=?utf-8?B?" + Base64.getEncoder().encodeToString(subject.getBytes()) + "?=";
                 var receivers = String.join(", ", mail.receivers());
                 var message = mail.message();
                 yield String.format(SmtpCommand.MESSAGE.getValue(), date, sender, encodedSubject, receivers, message);
