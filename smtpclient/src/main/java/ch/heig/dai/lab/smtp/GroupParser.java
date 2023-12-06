@@ -38,8 +38,10 @@ public class GroupParser {
             throw new IllegalArgumentException("The victim file is empty.");
         else if (messages.isEmpty())
             throw new IllegalArgumentException("The message file is empty.");
-        else if (!victims.get(0).matches("^(.+)@(\\S+)$"))
+        else if (victims.stream().anyMatch(victim -> !victim.matches("^(.+)@(\\S+)$")))
             throw new IllegalArgumentException("The victim file contains invalid email addresses.");
+        else if (victims.stream().anyMatch(victim -> victim.chars().anyMatch(c -> c > 127)))
+            throw new IllegalArgumentException("The victim file contains non-ASCII characters.");
         else if (victims.size() < groupCount * 6) // An upper bound of 6 emails per group is needed.
             throw new IllegalArgumentException("The victim file is not large enough.");
         else if (messages.size() < groupCount)
