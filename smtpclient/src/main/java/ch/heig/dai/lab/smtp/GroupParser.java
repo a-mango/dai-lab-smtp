@@ -68,7 +68,7 @@ public class GroupParser {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (var in = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(classloader.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
-            Stack<String> tmp = new Stack<String>();
+            Stack<String> tmp = new Stack<>();
             tmp.addAll(in.lines().toList());
             return tmp;
         } catch (Exception e) {
