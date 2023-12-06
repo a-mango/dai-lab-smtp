@@ -39,7 +39,7 @@ public enum SmtpCommand {
             From: %s\r
             Subject: %s\r
             To: %s\r
-            Content-Type: plain/text; charset="UTF-16";\r
+            Content-Type: text/plain; charset=utf-8\r
             \r
             %s\r
             .\r
